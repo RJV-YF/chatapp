@@ -1,38 +1,43 @@
-import 'package:chatapp/pages/register_page.dart';
+import 'package:chatapp/pages/login_page.dart';
 import 'package:chatapp/utils/validators.dart';
 import 'package:chatapp/widgets/action_button.dart';
 import 'package:chatapp/widgets/my_text_form_field.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
 
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   bool _isLoading = false;
 
   @override
   void dispose() {
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void _onLogin() {
+  void _onRegister() {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      // perform login
+      // perform registration
     }
   }
 
@@ -56,68 +61,100 @@ class _LoginPageState extends State<LoginPage> {
                 key: _formKey,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     // app logo
                     Icon(
-                      Icons.message,
+                      Icons.person_add_alt_1,
                       color: CupertinoColors.activeGreen,
-                      size: 100,
+                      size: 90,
                     ),
 
-                    // greeting message
+                    // greeting
                     Text(
-                      "Welcome Back! You've been missed.",
+                      "Create your account",
                       style: GoogleFonts.dancingScript(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: Colors.grey[700],
                       ),
                     ),
-                    SizedBox(height: 20),
 
-                    // email input field
+                    const SizedBox(height: 30),
+
+                    // name
+                    MyTextFormField(
+                      hintText: 'Full Name',
+                      icon: Icons.person_outline,
+                      controller: _nameController,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Name is required';
+                        }
+                        return null;
+                      },
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // email
                     MyTextFormField(
                       hintText: 'Email',
                       icon: Icons.email_outlined,
                       keyboardType: TextInputType.emailAddress,
                       controller: _emailController,
-                      validator: (value) => emailValidator(value),
+                      validator: emailValidator,
                     ),
 
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
-                    // password input field
+                    // password
                     MyTextFormField(
                       hintText: 'Password',
                       icon: Icons.lock_outline,
                       obscureText: true,
                       controller: _passwordController,
-                      validator: (value) => passwordValidator(value),
+                      validator: passwordValidator,
                     ),
 
-                    SizedBox(height: 40),
+                    const SizedBox(height: 20),
 
-                    // login button
+                    // confirm password
+                    MyTextFormField(
+                      hintText: 'Confirm Password',
+                      icon: Icons.lock_reset_outlined,
+                      obscureText: true,
+                      controller: _confirmPasswordController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Confirm your password';
+                        }
+                        if (value != _passwordController.text) {
+                          return 'Passwords do not match';
+                        }
+                        return null;
+                      },
+                    ),
+
+                    const SizedBox(height: 40),
+
+                    // register button
                     ActionButton(
-                      text: "Login",
-                      onTap: () async {
+                      text: "Create Account",
+                      onTap: () {
                         if (_formKey.currentState!.validate()) {
-                          setState(() => _isLoading = true);
-
-                          // perform login
-                          _onLogin();
+                          _onRegister();
                         }
                       },
                     ),
 
-                    // register now prompt
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
+
+                    // back to login
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Don't have an account? ",
+                          "Already have an account? ",
                           style: TextStyle(color: Colors.grey[600]),
                         ),
                         GestureDetector(
@@ -125,12 +162,12 @@ class _LoginPageState extends State<LoginPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const RegisterPage(),
+                                builder: (context) => const LoginPage(),
                               ),
                             );
                           },
                           child: Text(
-                            "Register Now",
+                            "Login",
                             style: TextStyle(
                               color: CupertinoColors.activeBlue,
                               fontWeight: FontWeight.bold,
