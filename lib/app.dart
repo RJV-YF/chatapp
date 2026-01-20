@@ -1,4 +1,4 @@
-import 'package:chatapp/pages/login_page.dart';
+import 'package:chatapp/pages/auth_gate.dart';
 import 'package:flutter/material.dart';
 
 class App extends StatelessWidget {
@@ -8,7 +8,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      home: AuthGate(),
     );
   }
 }

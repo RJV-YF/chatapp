@@ -1,10 +1,11 @@
 import 'package:chatapp/pages/login_page.dart';
+import 'package:chatapp/services/auth_service.dart';
 import 'package:chatapp/utils/validators.dart';
 import 'package:chatapp/widgets/action_button.dart';
 import 'package:chatapp/widgets/my_text_form_field.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -33,11 +34,38 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
-  void _onRegister() {
+  void _onRegister(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
       // perform registration
+      try {
+        await AuthService().signUpWithEmailAndPassword(
+          _emailController.text.trim(),
+          _passwordController.text.trim(),
+        );
+
+        _nameController.clear();
+        _emailController.clear();
+        _passwordController.clear();
+        _confirmPasswordController.clear();
+
+        if (context.mounted) {
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        // handle registration error
+        setState(() {
+          _isLoading = false;
+        });
+        _nameController.clear();
+        _emailController.clear();
+        _passwordController.clear();
+        _confirmPasswordController.clear();
+
+        // show error message to user as a toast
+        Fluttertoast.showToast(msg: e.toString());
+      }
     }
   }
 
@@ -139,10 +167,11 @@ class _RegisterPageState extends State<RegisterPage> {
 
                     // register button
                     ActionButton(
+                      isLoading: _isLoading,
                       text: "Create Account",
                       onTap: () {
                         if (_formKey.currentState!.validate()) {
-                          _onRegister();
+                          _onRegister(context);
                         }
                       },
                     ),
