@@ -1,3 +1,4 @@
+import 'package:chatapp/pages/chat_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:chatapp/services/chat_service.dart';
 import 'package:chatapp/widgets/chat_user_tile.dart';
@@ -41,7 +42,19 @@ class ChatsPage extends StatelessWidget {
               return ChatUserTile(
                 name: user['name'],
                 email: user['email'],
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) {
+                        return ChatPage(
+                          receiverEmail: user['email'],
+                          receiverID: user['uid'],
+                        );
+                      },
+                    ),
+                  );
+                },
               );
             },
           );

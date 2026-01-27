@@ -41,6 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
       // perform registration
       try {
         await AuthService().signUpWithEmailAndPassword(
+          _nameController.text.trim(),
           _emailController.text.trim(),
           _passwordController.text.trim(),
         );
